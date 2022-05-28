@@ -35,7 +35,7 @@ class App {
         mongoose.connect('mongodb://localhost:27017/authenticate-api-db?retryWrites=true&w=majority', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            ignoreUndefined: true,  
+            // ignoreUndefined: true,  
             authSource: 'admin',
         })
         mongoose.connection.on('error', () => console.error('connection error:'))

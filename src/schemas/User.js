@@ -6,12 +6,11 @@ const UserSchema = new Schema({
   username: { 
     type: String, 
     unique: true,
-    require: [true, "Username is a required field"],
+    required: [true, "Username is a required field"],
     lowercase: true
   },
   name: { 
     type: String, 
-    require: true 
   },
   email: {
     type: String,
@@ -25,7 +24,7 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'Password is a required field'],
     select: false
   },
   verifiedToken: {
@@ -49,6 +48,14 @@ const UserSchema = new Schema({
   timestamps: true,
 })
 
+// this is unique hook set error message code unique is 11000
+UserSchema.post('save', function(error, doc, next) {
+  if (error.code === 11000) {
+    next(new Error(`${JSON.stringify(error.keyValue)} must be unique has exists!`));
+  } else {
+    next(error);
+  }
+});
 
 UserSchema.pre('save', async function(next) {
   if (this.get('password')) {

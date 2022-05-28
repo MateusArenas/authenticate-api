@@ -12,13 +12,13 @@ const AuthRouter = {
         },
     },
     Post: {
-        ['/register']: async ({ body: { username, email, password } }, res) => {
-            const auth = await AuthService.register({ username, email, password })
+        ['/:type(register|signup)']: async ({ body: { email, username, password } }, res) => {
+            const auth = await AuthService.register({ email, username, password })
             return res.json(auth)
         },
-        ['/authenticate']: async ({ body: { email, password } }, res) => {
+        ['/:type(authenticate|signin)']: async ({ body: { identifier, email, username, password } }, res) => {
             console.log({ email, password  });
-            const auth = await AuthService.authenticate({ email, password })
+            const auth = await AuthService.authenticate({ identifier, email, username, password })
             return res.json(auth)
         },
         ['/resetpass']: async ({ body: { token, password } }, res) => {
@@ -27,8 +27,8 @@ const AuthRouter = {
         },
     },
     Put: {
-        ['/forgotpass/:email']: async ({ params: { email } }, res) => {
-            const auth = await AuthService.forgotpass({ email })
+        ['/forgotpass/:identifier']: async ({ params: { identifier } }, res) => {
+            const auth = await AuthService.forgotpass({ identifier })
             return res.json(auth)
         },
     }

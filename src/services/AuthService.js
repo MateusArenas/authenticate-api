@@ -4,7 +4,7 @@ const User = require('../schemas/User')
 const jwt = require('jsonwebtoken')
 const authConfig = require('../config/auth.json')
 const transporter = require('../modules/mailer')
-
+const { promisify } = require('util');
 
 class AuthService {
 
@@ -43,22 +43,16 @@ class AuthService {
     
     async register ({ username, email, password }) { // this controller as register account
         try {
-            if (await User.findOne({ email })) { throw new Error('User already exists') }
-            
-            if (!(/\S+@\S+\.\S+/).test(email)) { throw new Error('Error email format') }
-            
-            if (password.length < 8) { throw new Error('Error password it s smaller than 8') }
-
-            transporter.sendMail({ to: email, from: 'simplechatpop@gmail.com', template: 'auth/welcome' });
-
             const verifiedToken = crypto.randomBytes(20).toString('hex')
-
+            
             const user = await User.create({ username, email, password, verifiedToken })
-
+            
             user.password = password
 
-            transporter.sendMail({
-                to: email,
+           transporter.sendMail({ to: user.email, from: 'simplechatpop@gmail.com', template: 'auth/welcome',  });
+            
+           transporter.sendMail({
+                to: user.email,
                 from: 'simplechatpop@gmail.com',
                 template: 'auth/verify',
                 context: { url: `http://localhost/verify/${verifiedToken}` },
@@ -85,11 +79,11 @@ class AuthService {
           } catch (err) { throw new Error("An error occured " + err?.message) }
     }
 
-    async authenticate ({ username, email, password }) { // this controller as authenticate account
+    async authenticate ({ identifier, username, email, password }) { // this controller as authenticate account
         try {
-          const user = await User.findOne({ email }).select('+password')
+          const user = await User.findOne({ $or: [ {email}, {username}, {email: identifier}, {username: identifier} ]}).select('+password')
 
-          if (!user) { throw new Error('User not found') }
+          if (!user) { throw new Error('Invalid email or username filed User not found') }
     
           if(!await bcrypt.compare(password, user.password)) { throw new Error('Invalid password') }
     
@@ -99,14 +93,14 @@ class AuthService {
             user, 
             token: this.generateToken({ id: user._id })
           })
-        } catch (err) { throw new Error('Authentica failed ' + err?.message ) }
+        } catch (err) { throw new Error('Authenticate failed ' + err?.message ) }
     }
 
-    async forgotpass ({ email }) {
+    async forgotpass ({ identifier }) {
         try {
-          const user = await User.findOne({ email })
+          const user = await User.findOne({ $or: [{email: identifier}, {username: identifier}] })
 
-          if (!user) { throw new Error('User not found') }
+          if (!user) { throw new Error('Invalid email or username filed User not found') }
     
           const passwordResetToken = crypto.randomBytes(20).toString('hex')
 
@@ -120,8 +114,8 @@ class AuthService {
     
           await User.updateOne({ _id: user._id, passwordResetToken, passwordResetExpires })
 
-          transporter.sendMail({
-            to: email,
+         transporter.sendMail({
+            to: user.email,
             from: 'simplechatpop@gmail.com',
             template: 'auth/forgotpass',
             context: { token: passwordResetToken, url: 'http://localhost/resetpass', expiresHours }
