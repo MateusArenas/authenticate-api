@@ -26,14 +26,14 @@ const SubRouter = {
         },
     },
     Put: {
-        ['/update-subscription/:subscription']: async ({ params: { subscription }, body: { price } }, res) => {
-            const subscription = await SubService.updateSubscription({ subscription, price })
+        ['/update-subscription/:subscription']: async ({ params: { subscription:sub }, body: { price } }, res) => {
+            const subscription = await SubService.updateSubscription({ subscription:sub, price })
             return res.json(subscription)
         },
     },
     Delete: {
-        ['/cancel-subscription/:subscription']: async ({ params: { subscription } }, res) => {
-            const subscription = await SubService.cancelSubscription({ subscription })
+        ['/cancel-subscription/:subscription']: async ({ params: { subscription:sub } }, res) => {
+            const subscription = await SubService.cancelSubscription({ subscription:sub })
             return res.json(subscription)
         },
     }
