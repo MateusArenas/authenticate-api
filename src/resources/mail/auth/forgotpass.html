@@ -1,0 +1,21 @@
+<p>Esqueceu sua senha? não tem problema, copie e cole em no app: {{ token }}h</p>
+<p>ou</p>
+<p>Esqueceu sua senha? não tem problema, reedefinea abaixo! expira em {{ expiresHours }}h</p>
+<label id="label" for="fpassword">Nova Senha:</label>
+<form style="padding-left: 1px;" action="{{ url }}" method="POST">
+    <input style="
+        border-radius: 2px; 
+        border: 1px solid rgb(112, 156, 206); 
+        padding: 5px;
+    "  type="password" id="pass" name="password" minlength="8" required>
+    <input type="hidden" name="token" value="{{ token }}">
+    <input style="
+        height: 100%;
+        background-color: rgb(112, 156, 206);
+        border-radius: 2px; 
+        border: 0px solid rgba(112, 156, 206, 0); 
+        padding: 6px;
+        margin: 5px 5px 5px 0px;
+        color: white;
+    " type="submit" value="Enviar">
+</form>
