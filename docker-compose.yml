@@ -1,0 +1,42 @@
+version: "3"
+
+services: 
+  mongo:
+    hostname: mongo
+    container_name: localmongo1
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE=auth-db
+      - MONGO_REPLICA_SET_NAME=rs0
+    ports:
+      - 27017:27017
+    # restart: always
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongo:27017\"}]}).ok || rs.status().ok || rs.secondaryOk().ok" | mongo --port 27017 --quiet) -eq 1
+      interval: 10s
+      retries: 1
+      start_period: 30s
+    volumes: 
+      - ./mongo-initdb.d:/docker-entrypoint-initdb.d
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+
+  mongosetup:
+    image: mongo:latest
+    depends_on:
+      - mongo
+    volumes: 
+      - ./mongo-initdb.d:/docker-entrypoint-initdb.d
+    restart: "no"
+
+  app: 
+    container_name: app
+    build: .
+    ports: 
+      - "80:80"
+    depends_on: 
+      - mongo
+      - mongosetup
+    links:
+      - mongo
+      - mongosetup
+    command: yarn dev

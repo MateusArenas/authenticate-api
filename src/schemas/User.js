@@ -42,7 +42,8 @@ const UserSchema = new Schema({
   expiredAt: {
     type: Date,
     default: Date.now,
-    expires: '2d' 
+    expires: '1m'
+    // expires: '2d' 
   },
 }, {
   timestamps: true,

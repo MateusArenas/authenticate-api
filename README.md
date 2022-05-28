@@ -1,6 +1,16 @@
 
 ## API Documentation
 
+#### Starter this API using Docker
+```$
+  docker-compose build --no-cache
+```
+##### Before
+
+```$
+  docker-compose up -d
+```
+
 #### Username Verify and Received Suggestions
 if the username exists, it will be by assigning an array with name suggestions
 ```http
