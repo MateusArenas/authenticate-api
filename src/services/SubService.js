@@ -5,7 +5,7 @@ class SubService {
     async config ({  }) { 
         try {
             const prices = await stripe.prices.list({
-                lookup_keys: ['sample_basic', 'sample_premium'],
+                lookup_keys: ['starter', 'silver', 'premium'],
                 expand: ['data.product']
             });
 
