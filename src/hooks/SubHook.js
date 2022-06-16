@@ -1,14 +1,24 @@
+const express = require('express');
+const stripe = require('../modules/stripe');
 const endpointSecret = "whsec_c07a7975a14f6e93dea39f57abd95b41768376af6fda247c8f3a8fbc10235029";
 
-const SubHook = {
+const SubHook = {   
     Post: {
         ['/webhook']: async (req, res) => {
             // const auth = await AuthService.resetpass({ token, password })
             // return res.json(auth)
+
+            const payloadString = JSON.stringify(req.body, null, 2);
+
+            const header = stripe.webhooks.generateTestHeaderString({
+                payload: payloadString,
+                secret: endpointSecret,
+            });
+
             let event;
         
             try {   
-                event = stripe.webhooks.constructEvent(req.body, req.header('Stripe-Signature'), endpointSecret );
+                event = stripe.webhooks.constructEvent(payloadString, header, endpointSecret);
             } catch (err) {
                 console.log(err);
                 console.log(`⚠️  Webhook signature verification failed.`);
@@ -17,9 +27,11 @@ const SubHook = {
                 );
                 return res.sendStatus(400);
             }
-        
+
             // Extract the object from the event.
             const dataObject = event.data.object;
+
+            // console.log(dataObject);
         
             // Handle the event
             // Review important events for Billing webhooks
@@ -27,25 +39,27 @@ const SubHook = {
             // Remove comment to see the various objects sent for this sample
             switch (event.type) {
                 case 'invoice.payment_succeeded':
-                if(dataObject['billing_reason'] == 'subscription_create') {
-                    // The subscription automatically activates after successful payment
-                    // Set the payment method used to pay the first invoice
-                    // as the default payment method for that subscription
-                    const subscription_id = dataObject['subscription']
-                    const payment_intent_id = dataObject['payment_intent']
-        
-                    // Retrieve the payment intent used to pay the subscription
-                    const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
-        
-                    const subscription = await stripe.subscriptions.update(
-                    subscription_id,
-                    {
-                        default_payment_method: payment_intent.payment_method,
-                    },
-                    );
-        
-                    console.log("Default payment method set for subscription:" + payment_intent.payment_method);
-                };
+                    console.log('hook: ', dataObject['billing_reason']);
+                    if(dataObject['billing_reason'] == 'subscription_create') {
+
+                        // The subscription automatically activates after successful payment
+                        // Set the payment method used to pay the first invoice
+                        // as the default payment method for that subscription
+                        const subscription_id = dataObject['subscription']
+                        const payment_intent_id = dataObject['payment_intent']
+            
+                        // Retrieve the payment intent used to pay the subscription
+                        const payment_intent = await stripe.paymentIntents.retrieve(payment_intent_id);
+            
+                        const subscription = await stripe.subscriptions.update(
+                        subscription_id,
+                        {
+                            default_payment_method: payment_intent.payment_method,
+                        },
+                        );
+            
+                        console.log("Default payment method set for subscription:" + payment_intent.payment_method);
+                    }
         
                 break;
                 case 'invoice.payment_failed':

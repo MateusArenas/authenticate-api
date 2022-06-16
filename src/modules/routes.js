@@ -16,6 +16,7 @@ folders.forEach(folder => {
                     if (typeof controller[path] === 'object') {
                         deepCombine(controller[path], complexPath+path)
                     } else {
+                        console.log(complexPath+path);
                         if (Array.isArray(controller[path])) { // this passe args, midllewares
                             routes[method](complexPath+path, ...controller[path])
                         } else {

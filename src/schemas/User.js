@@ -3,14 +3,15 @@ const bcrypt = require('bcryptjs')
 
 const UserSchema = new Schema({
   uri: String,
-  username: { 
-    type: String, 
-    unique: true,
-    required: [true, "Username is a required field"],
-    lowercase: true
-  },
-  name: { 
-    type: String, 
+  // username: {
+  //   type: String,
+  //   unique: true,
+  //   required: [true, "Username is a required field"],
+  //   lowercase: true
+  // },
+  name: {
+    type: String,
+    required: [true, "Name is a required field"],
   },
   email: {
     type: String,
@@ -18,7 +19,10 @@ const UserSchema = new Schema({
     required: [true, "Email is a required field"],
     lowercase: true
   },
-  verified: { 
+  customerKey: {
+    type: String,
+  },
+  verified: {
     type: Boolean,
     default: false,
   },
@@ -39,11 +43,16 @@ const UserSchema = new Schema({
     type: Date,
     select: false
   },
+  emailVerifyCode: { type: String },
+  emailVerifyExpires: {
+    type: Date,
+    select: false
+  },
   expiredAt: {
     type: Date,
     default: Date.now,
-    expires: '1m'
-    // expires: '2d' 
+    // expires: '1m'
+    expires: '2d'
   },
 }, {
   timestamps: true,
@@ -67,12 +76,12 @@ UserSchema.pre('save', async function(next) {
   next()
 })
 
-UserSchema.path('username').validate(function(username) {
-  if (!(/^[a-zA-Z0-9._]{0,28}[\w]+$/).test(username)) {
-    throw new Error("Please enter a valid Username format!")
-  }
-  return true
-});
+// UserSchema.path('username').validate(function(username) {
+//   if (!(/^[a-zA-Z0-9._]{0,28}[\w]+$/).test(username)) {
+//     throw new Error("Please enter a valid Username format!")
+//   }
+//   return true
+// });
 
 UserSchema.path('password').validate(function(password) {
   if (!(/^(?!.* )(?=.*\d)(?=.*[A-Z]).{8,15}$/).test(password)) {

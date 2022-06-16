@@ -43,7 +43,7 @@ class App {
         })
     }
     handleDatabase() {
-        mongoose.connect('mongodb://mongo:27017/auth-db?retryWrites=true&w=majority', {
+        mongoose.connect('mongodb://localhost:27017/auth-db?retryWrites=true&w=majority', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             // ignoreUndefined: true,  
@@ -61,8 +61,8 @@ class App {
     }
 
     handleDatabaseChanges () {
-        console.log({ changes });
-        monitorAllEventEmitter(changes)
+        // console.log({ changes });
+        // monitorAllEventEmitter(changes)
     }
 }
 
