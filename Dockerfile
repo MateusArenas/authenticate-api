@@ -7,5 +7,5 @@ RUN yarn
 
 COPY . .
 
-EXPOSE 80
+EXPOSE ${APP_PORT}
 CMD ["yarn", "dev"]

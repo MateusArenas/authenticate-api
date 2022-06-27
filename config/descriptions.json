@@ -1,0 +1,27 @@
+{
+    "roles": {
+        "super_administrator": 
+            "alguém com acesso aos recursos de administração de rede do site e todos os outros recursos. Consulte o artigo Criar uma Rede.",
+        
+        "administrator": 
+            "alguém que tenha acesso a todos os recursos de administração dentro de um único site.",
+
+        "editor": 
+            "alguém que pode publicar e gerenciar postagens, incluindo as postagens de outros usuários.",
+
+        "author":
+            "alguém que possa publicar e gerenciar seus próprios posts.",
+    
+        "contributor":
+            "alguém que pode escrever e gerenciar seus próprios posts, mas não pode publicá-los.",
+    
+        "subscriber":
+            "alguém que só pode gerenciar seu perfil."
+    },
+
+    "permissions": {
+        "product_creator": 
+            "usuario pode criar produtos"
+    }
+
+}
