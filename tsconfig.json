@@ -4,7 +4,7 @@
     "lib": ["ES6"],                                      
     "module": "commonjs",                                
     "rootDir": "./",                                  
-    "outDir": "./",                                   
+    "outDir": "dist",                                   
     "esModuleInterop": true,                             
     "forceConsistentCasingInFileNames": true,            
     "strict": true,                                     

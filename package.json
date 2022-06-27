@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./index.ts",
-    "test": "nodemon tests/index.js"
+    "test": "nodemon tests/index.js",
+    "start": "node ./dist/index.js",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean"
   },
   "repository": "https://github.com/MateusArenas/simple-chat-api.git",
   "license": "MIT",
